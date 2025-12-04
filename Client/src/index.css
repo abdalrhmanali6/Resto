@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@theme{
+    --primary-color:#f47b25;
+    --secondry-color:221710;
+}
+@layer base{
+    body{
+        font-family: "Cairo";
+        background-color: #f8f6f6;
+        
+    }}
+
+    h1{
+        font-size: 30px;
+        font-weight: bolder;
+    }
+
+    h4{
+        color:rgb(128, 128, 128);
+    }
+    input{
+        @apply   border border-gray-300 rounded-3xl pl-20  pr-4 py-4 w-full placeholder:text-end  outline-0 text-right
+    }
+
+     header{
+        @apply top-0 right-0 left-0 h-18 border border-gray-400
+        flex justify-between px-8 z-50 bg-white
+    }
+
+@layer components{
+    .header-button{
+        @apply bg-[#d44211] text-white font-semibold px-4 py-2 rounded-3xl hover:bg-[#d44211]/80 active:opacity-50 cursor-pointer
+    }
+
+    .header-nav{
+       @apply  font-medium text-[#221510] hover:text-[#d44211] active:opacity-50 cursor-pointer
+    }
+    .nav-btn{
+        @apply  md:text-base  text-sm  text-(--primary-color)  font-bold hover:text-amber-600 active:opacity-50
+    }
+
+     .error{
+        @apply text-red-500 text-center
+    }
+
+    .green{
+        @apply text-green-400 text-center
+    }
+}
+
+        /* Hide scrollbar */
+        .swiper-scrollbar {
+          display: none !important;
+        }
+
+        /* Hide pagination dots */
+        .swiper-pagination {
+          display: none !important;
+        }
+
+       
+      .my-swiper{
+  --swiper-navigation-size: 20px;
+  --swiper-navigation-top-offset: 50%;
+  --swiper-navigation-sides-offset: 10px;
+  --swiper-navigation-color:#d44211;
+}

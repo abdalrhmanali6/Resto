@@ -1,0 +1,15 @@
+
+addmeal should contain part to check if this meal exist before or not 
+
+
+
+CRUD for categories 
+CRUD for admin 
+CRUD for delivery 
+-- --  --
+Delivery : 
+-- 
+add salary to delivery ;
+if ready 
+
+
