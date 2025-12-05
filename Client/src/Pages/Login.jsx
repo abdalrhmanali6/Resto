@@ -14,17 +14,19 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    SetUserData({
-      email: e.target.elements.email?.value,
-      password: e.target.elements.pass?.value,
-    });
+   const email = e.target.elements.email?.value;
+    const password = e.target.elements.pass?.value;
 
-    Api.post("/users/login", UserData)
+    Api.post("/users/login", {
+      email:email,
+      password:password
+    })
       .then((res) => {
         console.log(res);
-        const token = res.data.data;
+        const {token,user} = res.data.data;
         localStorage.setItem("token", token);
-        //setTimeout(() => Navigate("/"), 500);
+        localStorage.setItem("user", JSON.stringify(user));
+        setTimeout(() => Navigate("/",{ replace: true }), 500);
       })
       .catch((e) => {
         console.log(e)
@@ -117,7 +119,7 @@ function Login() {
             <p
               className="text-center text-gray-500 cursor-pointer active:opacity-50"
               onClick={() => {
-                Navigate("/Register");
+                Navigate("/Register",{ replace: true });
               }}
             >
               ليس لديك حساب؟ انشئ حسابك الان

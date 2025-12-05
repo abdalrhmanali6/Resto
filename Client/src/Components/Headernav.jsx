@@ -1,45 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Api from "./Api"; // Your axios instance
 
 function Header() {
-  const [loggedIn, SetLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const Navigate = useNavigate();
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
+
+  if (token && storedUser) {
+    const parsedUser = JSON.parse(storedUser);
+    setLoggedIn(true);
+    fetchUserData(parsedUser);
+  } else {
+    setLoggedIn(false);
+    setLoading(false);
+  }
+}, []);
+
+const fetchUserData = async (user) => {
+  try {
+    setUserName(`${user?.first_name || ""} ${user?.last_name || ""}`.trim());
+    console.log(user?.first_name);
+    setLoading(false);
+  } catch (error) {
+    console.log("Error fetching user data:", error);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setLoggedIn(false);
+    setLoading(false);
+  }
+};
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setLoggedIn(false);
+    setUserName("");
+    Navigate("/Login",{ replace: true });
+  };
+
+  if (loading) return <header className="p-4">Loading...</header>;
+
   return (
-    <header>
+    <header className="flex items-center justify-between p-4 bg-white shadow">
       {location.pathname === "/" && (
         <>
-          <div className="flex items-center space-x-6 flex-1">
-            <button className="bg-[#d44211]/20 p-2 rounded-xl hover:bg-[#d44211]/30 active:opacity-50 cursor-pointer">
-              <svg
-                fill="currentColor"
-                height="20"
-                viewBox="0 0 256 256"
-                width="20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
-              </svg>
-            </button>
+
             {loggedIn ? (
-              <button className="header-button">اطلب الأن</button>
+              <>
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={handleLogout}
+                    className="header-button bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                  >
+                    تسجيل الخروج
+                  </button>
+                  <span className="text-gray-800 font-semibold">
+                    أهلا {userName}
+                  </span>
+                </div>
+              </>
             ) : (
               <>
                 <button
                   className="header-button"
-                  onClick={() => Navigate("/Login")}
+                  onClick={() => Navigate("/Login",{ replace: true })}
                 >
                   سجل الدخول
                 </button>
                 <button
                   className="header-button"
-                  onClick={() => Navigate("/Register")}
+                  onClick={() => Navigate("/Register",{ replace: true })}
                 >
                   حساب جديد
                 </button>
               </>
             )}
-          </div>
+          
 
           <nav className="flex-2 flex items-center justify-center space-x-10">
             <p className="header-nav">الدعم الفني</p>
@@ -55,7 +97,7 @@ function Header() {
           <div className="flex items-center space-x-6 flex-1">
             <button
               className="header-button"
-              onClick={() => Navigate("/Login")}
+              onClick={() => Navigate("/Login",{ replace: true })}
             >
               سجل الدخول
             </button>
@@ -63,19 +105,22 @@ function Header() {
 
           <nav className="flex-2 flex items-center justify-center space-x-10">
             <p className="header-nav">الدعم الفني</p>
-            <p className="header-nav"
-             onClick={()=>Navigate("/")}>القائمة الرئيسية</p>
+            <p
+              className="header-nav cursor-pointer"
+              onClick={() => Navigate("/",{ replace: true })}
+            >
+              القائمة الرئيسية
+            </p>
           </nav>
         </>
       )}
 
-      
       {location.pathname === "/Login" && (
         <>
           <div className="flex items-center space-x-6 flex-1">
             <button
               className="header-button"
-              onClick={() => Navigate("/Register")}
+              onClick={() => Navigate("/Register",{ replace: true })}
             >
               حساب جديد
             </button>
@@ -83,12 +128,17 @@ function Header() {
 
           <nav className="flex-2 flex items-center justify-center space-x-10">
             <p className="header-nav">الدعم الفني</p>
-            <p className="header-nav"
-             onClick={()=>Navigate("/")}>القائمة الرئيسية</p>
+            <p
+              className="header-nav cursor-pointer"
+              onClick={() => Navigate("/",{ replace: true })}
+            >
+              القائمة الرئيسية
+            </p>
           </nav>
         </>
       )}
-      <div className="flex-1 flex items-center justify-end ">
+
+      <div className="flex-1 flex items-center justify-end">
         <img src="logo.png" alt="سيخ كفتة" className="w-20" />
       </div>
     </header>

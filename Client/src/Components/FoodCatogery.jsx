@@ -95,6 +95,7 @@ function FoodCategory() {
                   </SwiperSlide>
                 ))}
               </Swiper>
+              
             </div>
           </div>
         );
