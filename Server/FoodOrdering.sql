@@ -2,7 +2,7 @@ CREATE TABLE users
 (
   id INT IDENTITY(1,1) PRIMARY KEY ,
   email VARCHAR(255) UNIQUE NOT NULL,
-  password VARCHAR(255) , ///////////////////////////
+  password VARCHAR(255) NOT NULL,
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
   gender VARCHAR(20) CHECK (gender IN ('male', 'female')),

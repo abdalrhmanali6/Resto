@@ -28,6 +28,7 @@ const register = asyncWrapper(async (req, res, next) => {
     return next(generateError("Email already exists", 400, FAIL));
 
   const hashedPassword = await bcrypt.hash(password, 10);
+  console.log(hashedPassword);
 
   const result = await pool
     .request()
