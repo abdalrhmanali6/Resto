@@ -6,26 +6,34 @@ import Api from "./Api"; // Your axios instance
 function FoodCard({ foodName, foodPrice, image, foodId }) {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [Quantity,setQuantity]=useState(1);
   const Navigate = useNavigate();
 
-  const handleAddToCart = async () => {
+  const handleCardClick = () => {
     const token = localStorage.getItem("token");
-
-  
     if (!token) {
       setShowLoginPopup(true);
       return;
     }
-
-
-    setLoading(true);
+    Navigate(`/food/${foodId}`);
+  };
+  const handleAddToCart = async () => {
     try {
-      const response = await Api.post(
-        "/cart/add",
-        {
-          foodId: foodId,
-          quantity: 1,
-        },
+      const token = localStorage.getItem("token");
+      const storedUser = localStorage.getItem("user");
+
+      if (!token || !storedUser) {
+        alert("من فضلك قم بتسجيل الدخول أولاً");
+        return;
+      }
+
+      setQuantity(Quantity+1)
+      const user = JSON.parse(storedUser); 
+      console.log("user id =", user.id); 
+
+      await Api.post(
+        `/cart/${user.id}`, 
+        { product_id: foodId, quantity:Quantity }, 
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -33,57 +41,48 @@ function FoodCard({ foodName, foodPrice, image, foodId }) {
         }
       );
 
-      
-      alert("تم إضافة المنتج إلى السلة بنجاح!");
-      console.log("Added to cart:", response.data);
-    } catch (error) {
-      console.log("Error adding to cart:", error);
-      
-      if (error.response?.status === 401) {
-        localStorage.removeItem("token");
-        setShowLoginPopup(true);
-      } else {
-        alert("حدث خطأ. حاول مرة أخرى لاحقا");
-      }
-    } finally {
-      setLoading(false);
+      alert("تمت إضافة الطلب إلى السلة");
+    } catch (err) {
+      console.error("Add to cart error", err);
+      alert("حدث خطأ أثناء إضافة الطلب");
     }
   };
-
   return (
-    <>
-      <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 w-full">
-        <div className="w-full h-48 overflow-hidden bg-gray-200">
-          <img
-            src={image}
-            alt={foodName}
-            className="w-full h-full object-cover hover:scale-110 transition duration-300"
-            onError={(e) => {
-              e.target.src = "https://via.placeholder.com/200?text=No+Image";
-            }}
-          />
-        </div>
+    <div
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 w-full cursor-pointer"
+      onClick={handleCardClick}
+    >
+      <div className="w-full h-48 overflow-hidden bg-gray-200">
+        <img
+          src={image}
+          alt={foodName}
+          className="w-full h-full object-cover hover:scale-110 transition duration-300"
+          onError={(e) => {
+            e.target.src = "https://via.placeholder.com/200?text=No+Image";
+          }}
+        />
+      </div>
 
-        <div className="p-4">
-          <h3 className="font-semibold text-gray-800 truncate text-lg">
-            {foodName}
-          </h3>
-          <p className="text-xl font-bold text-red-500 mt-2">£ {foodPrice}</p>
-          <button
-            onClick={handleAddToCart}
-            disabled={loading}
-            className="w-full mt-3 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-200 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "جاري الإضافة..." : "Add to Cart"}
-          </button>
-        </div>
+      <div className="p-4" onClick={(e) => e.stopPropagation()}>
+        <h3 className="font-semibold text-gray-800 truncate text-lg">
+          {foodName}
+        </h3>
+        <p className="text-xl font-bold text-red-500 mt-2">{foodPrice}</p>
+
+        <button
+          onClick={handleAddToCart}
+          disabled={loading}
+          className="w-full mt-3 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition duration-200 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? "Adding..." : "Add to Cart"}
+        </button>
       </div>
 
       <LoginPopup
         isOpen={showLoginPopup}
         onClose={() => setShowLoginPopup(false)}
       />
-    </>
+    </div>
   );
 }
 

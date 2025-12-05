@@ -169,7 +169,7 @@ function Register() {
                 <option value="male">ذكر</option>
                 <option value="female">انثى</option>
               </select>
-            </div>          
+            </div>               
             {signedUp && (
               <p className="green flex justify-center">
                 <svg

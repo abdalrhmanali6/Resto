@@ -20,7 +20,7 @@ function Input({
         type={type}
         placeholder={placeholder}
         required={required}
-        className={className}
+        className={`Input ${className}`}
         {...rest}
       />
       {element && element}

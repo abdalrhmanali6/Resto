@@ -18,9 +18,7 @@
     h4{
         color:rgb(128, 128, 128);
     }
-    input{
-        @apply   border border-gray-300 rounded-3xl pl-20  pr-4 py-4 w-full placeholder:text-end  outline-0 text-right
-    }
+    
 
      header{
         @apply top-0 right-0 left-0 h-18 border border-gray-400
@@ -31,7 +29,9 @@
     .header-button{
         @apply bg-[#d44211] text-white font-semibold px-4 py-2 rounded-3xl hover:bg-[#d44211]/80 active:opacity-50 cursor-pointer
     }
-
+    .Input{
+        @apply   border border-gray-300 rounded-3xl pl-20  pr-4 py-4 w-full placeholder:text-end  outline-0 text-right
+    }
     .header-nav{
        @apply  font-medium text-[#221510] hover:text-[#d44211] active:opacity-50 cursor-pointer
     }

@@ -90,6 +90,7 @@ function FoodCategory() {
                         foodName={food.name}
                         foodPrice={food.price}
                         image={food.image}
+                        foodId={food.id}
                       />
                     </div>
                   </SwiperSlide>
