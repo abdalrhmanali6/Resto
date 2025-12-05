@@ -13,3 +13,9 @@ add salary to delivery ;
 if ready 
 
 
+
+update admin=> delivery => addDelivery
+
+
+
+(check before update is this update can be made or not like update email  to exists email)

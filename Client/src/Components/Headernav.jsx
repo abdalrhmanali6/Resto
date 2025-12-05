@@ -26,7 +26,6 @@ useEffect(() => {
 const fetchUserData = async (user) => {
   try {
     setUserName(`${user?.first_name || ""} ${user?.last_name || ""}`.trim());
-    console.log(user?.first_name);
     setLoading(false);
   } catch (error) {
     console.log("Error fetching user data:", error);
@@ -48,7 +47,7 @@ const fetchUserData = async (user) => {
 
   return (
     <header className="flex items-center justify-between p-4 bg-white shadow">
-      {location.pathname === "/" && (
+      {location.pathname === "/"   && (
         <>
 
             {loggedIn ? (
@@ -84,13 +83,106 @@ const fetchUserData = async (user) => {
           
 
           <nav className="flex-2 flex items-center justify-center space-x-10">
-            <p className="header-nav">الدعم الفني</p>
-            <p className="header-nav">التقيمات</p>
+
+            <p className="header-nav" onClick={() => Navigate("/cart", { replace: true })}>سلة المشتريات </p>
             <p className="header-nav">طلباتك</p>
             <p className="header-nav text-[#d44211]">القائمة الرئيسية</p>
           </nav>
         </>
       )}
+
+      {location.pathname.startsWith("/food/") && (
+        <>
+
+            {loggedIn ? (
+              <>
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={handleLogout}
+                    className="header-button bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                  >
+                    تسجيل الخروج
+                  </button>
+                  <span className="text-gray-800 font-semibold">
+                    أهلا {userName}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <button
+                  className="header-button"
+                  onClick={() => Navigate("/Login",{ replace: true })}
+                >
+                  سجل الدخول
+                </button>
+                <button
+                  className="header-button"
+                  onClick={() => Navigate("/Register",{ replace: true })}
+                >
+                  حساب جديد
+                </button>
+              </>
+            )}
+          
+          
+          <nav className="flex-2 flex items-center justify-center space-x-10">
+           
+            <p className="header-nav">التقيمات</p>
+            <p className="header-nav" onClick={() => Navigate("/cart", { replace: true })}>سلة المشتريات </p>
+            <p className="header-nav">طلباتك</p>
+            <p className="header-nav cursor-pointer"
+              onClick={() => Navigate("/",{ replace: true })}>القائمة الرئيسية</p>
+          </nav>
+        </>)}
+
+
+              {location.pathname === "/cart" && (
+        <>
+          {loggedIn ? (
+            <>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={handleLogout}
+                  className="header-button bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                >
+                  تسجيل الخروج
+                </button>
+                <span className="text-gray-800 font-semibold">
+                  أهلا {userName}
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              <button
+                className="header-button"
+                onClick={() => Navigate("/Login", { replace: true })}
+              >
+                سجل الدخول
+              </button>
+              <button
+                className="header-button"
+                onClick={() => Navigate("/Register", { replace: true })}
+              >
+                حساب جديد
+              </button>
+            </>
+          )}
+
+    <nav className="flex-2 flex items-center justify-center space-x-10">
+      <p className="header-nav">التقيمات</p>
+      <p className="header-nav  text-[#d44211]" >سلة المشتريات </p>
+      <p
+        className="header-nav cursor-pointer"
+        onClick={() => Navigate("/", { replace: true })}
+      >
+        القائمة الرئيسية
+      </p>
+    </nav>
+  </>
+)}
+
 
       {location.pathname === "/Register" && (
         <>
@@ -104,7 +196,6 @@ const fetchUserData = async (user) => {
           </div>
 
           <nav className="flex-2 flex items-center justify-center space-x-10">
-            <p className="header-nav">الدعم الفني</p>
             <p
               className="header-nav cursor-pointer"
               onClick={() => Navigate("/",{ replace: true })}
@@ -127,7 +218,6 @@ const fetchUserData = async (user) => {
           </div>
 
           <nav className="flex-2 flex items-center justify-center space-x-10">
-            <p className="header-nav">الدعم الفني</p>
             <p
               className="header-nav cursor-pointer"
               onClick={() => Navigate("/",{ replace: true })}
@@ -139,7 +229,7 @@ const fetchUserData = async (user) => {
       )}
 
       <div className="flex-1 flex items-center justify-end">
-        <img src="logo.png" alt="سيخ كفتة" className="w-20" />
+        <img src="/logo.png" alt="سيخ كفتة" className="w-20" />
       </div>
     </header>
   );

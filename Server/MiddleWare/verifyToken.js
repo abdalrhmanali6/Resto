@@ -10,6 +10,7 @@ module.exports = (req, res, next) => {
   const token = authHeader.split(" ")[1];
   try {
     const loadedToken = JWT.verify(token, process.env.JWT_SECRET_KEY);
+    console.log(loadedToken);
     next();
   } catch (error) {
     return next(generateError("invalid token ", 401, FAIL));

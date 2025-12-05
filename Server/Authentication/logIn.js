@@ -37,6 +37,10 @@ const logIn = asyncWrapper(async (req, res, next) => {
   const user = data[0];
 
   const matchedPassword = await bcrypt.compare(password, user.password);
+  console.log(matchedPassword);
+  console.log(user.password);
+  console.log(password);
+  
   if (!matchedPassword)
     return next(generateError("Wrong Password", 404, FAIL));
 
@@ -46,16 +50,9 @@ const logIn = asyncWrapper(async (req, res, next) => {
     role: user.role,
   });
 
-  handleRes(res, 200, SUCCESS, {
-    token,
-    user: {
-      id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      role: user.role,
-    },
-  });
+  handleRes(res, 200, SUCCESS, 
+    token
+    );
 });
 
 

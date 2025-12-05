@@ -2,6 +2,8 @@ import "./App.css";
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
 import Home from "./Pages/Home";
+import FoodDetails from "./Pages/FoodDetails";
+import Cart from "./Pages/Cart";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 function App() {
     const route = createBrowserRouter([
@@ -13,6 +15,14 @@ function App() {
         {
             path: "/Login",
             element: <Login />,
+        },
+        {
+            path: "/food/:id",
+            element: <FoodDetails />,
+        },
+        {
+            path: "/cart",
+            element: <Cart />,
         },
     ]);
 
