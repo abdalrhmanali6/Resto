@@ -5,7 +5,7 @@ import Api from "./Api"; // Your axios instance
 
 function FoodCard({ foodName, foodPrice, image, foodId }) {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, SetLoading] = useState(false);
   const [Quantity,setQuantity]=useState(1);
   const Navigate = useNavigate();
 
