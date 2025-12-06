@@ -2,9 +2,9 @@ const { connectDB, sql } = require("../MiddleWare/connectToDB");
 const generateError = require("../MiddleWare/generateError");
 const handleRes = require("../MiddleWare/handleRes");
 const { SUCCESS, FAIL } = require("../MiddleWare/handleResStatus");
-const asyncWrapper = require('../MiddleWare/errorHandling');
-const showOrders = asyncWrapper(async (req, res, next) => {
+const asyncWrapper = require("../MiddleWare/errorHandling");
 
+const showOrders = asyncWrapper(async (req, res, next) => {
   const { delivery_id } = req.params; // from URL
 
   const pool = await connectDB();
@@ -19,6 +19,7 @@ const showOrders = asyncWrapper(async (req, res, next) => {
         o.sub_total,
         o.delivery_fees,
         o.total_price,
+        o.location,
 
         p.id AS product_id,
         p.name AS product_name,
@@ -82,12 +83,12 @@ const completeOrder = asyncWrapper(async (req, res, next) => {
 
   // 3) Update order status to delivered
   await pool.request().input("order_id", sql.Int, order_id).query(`
-      UPDATE orders
-      SET status = 'delivered'
-      WHERE id = @order_id
+         UPDATE orders
+SET 
+    status = 'delivered',
+    date_arrived = GETDATE()
+WHERE id = @order_id;
     `);
-
-
 
   return handleRes(res, 200, SUCCESS, "order completed successfully");
 });

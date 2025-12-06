@@ -2,18 +2,31 @@ const { connectDB, sql } = require("../MiddleWare/connectToDB.js");
 const generateError = require("../MiddleWare/generateError.js");
 const { FAIL } = require("../MiddleWare/handleResStatus.js");
 const asyncWrapper = require("../MiddleWare/errorHandling.js");
+const handleRes = require("../MiddleWare/handleRes.js");
 
 const setOrder = asyncWrapper(async (req, res, next) => {
   const pool = await connectDB();
-    const user_id = req.params;
-  const {location } = req.body;
 
-  if (!user_id || !location === undefined)
+  const { user_id } = req.params; // FIXED: Correct extraction
+  const { location } = req.body;
+
+  if (!user_id || location === undefined)
     return next(generateError("Missing required fields", 400, FAIL));
 
-  let delivery_fees = 20;
+  const delivery_fees = 20;
 
-  // 1) Get all cart items for user
+  const userResult = await pool.request().input("user_id", sql.Int, user_id)
+    .query(`
+      SELECT first_name, last_name, phone
+      FROM users
+      WHERE id = @user_id
+    `);
+
+  if (userResult.recordset.length === 0)
+    return next(generateError("User does not exist", 400, FAIL));
+
+  const { first_name, last_name, phone } = userResult.recordset[0];
+
   const cartResult = await pool.request().input("user_id", sql.Int, user_id)
     .query(`
       SELECT c.product_id, c.quantity, p.price
@@ -27,31 +40,29 @@ const setOrder = asyncWrapper(async (req, res, next) => {
   if (cartItems.length === 0)
     return next(generateError("Cart is empty", 400, FAIL));
 
-  // 2) Calculate sub_total
   let sub_total = 0;
   cartItems.forEach((item) => {
     sub_total += item.price * item.quantity;
   });
 
-  const result = await pool.request().query(`
-        SELECT user_id
-        FROM delivery_profiles
-        WHERE status = 'ready'
-        ORDER BY date_ready ASC
-      `);
+  const deliveryResult = await pool.request().query(`
+      SELECT user_id
+      FROM delivery_profiles
+      WHERE status = 'ready'
+      ORDER BY date_ready ASC
+  `);
 
-  if (result.recordset.length === 0)
+  if (deliveryResult.recordset.length === 0)
     return next(
       generateError(
-        "No delivery ready at the moment try another time",
+        "No delivery ready at the moment, try again later",
         200,
         FAIL
       )
     );
 
-  let delivery_id = result.recordset[0];
+  const delivery_id = deliveryResult.recordset[0].user_id;
 
-  // 3) Insert into orders
   const orderResult = await pool
     .request()
     .input("user_id", sql.Int, user_id)
@@ -59,15 +70,19 @@ const setOrder = asyncWrapper(async (req, res, next) => {
     .input("location", sql.VarChar, location)
     .input("sub_total", sql.Decimal(10, 2), sub_total)
     .input("delivery_fees", sql.Decimal(10, 2), delivery_fees)
+    .input("first_name", sql.VarChar, first_name)
+    .input("last_name", sql.VarChar, last_name)
+    .input("phone", sql.VarChar, phone)
     .input("status", sql.VarChar, "preparing").query(`
-      INSERT INTO orders (user_id, delivery_id, location, sub_total, delivery_fees, status)
+      INSERT INTO orders 
+      (user_id, delivery_id, location, sub_total, delivery_fees, first_name, last_name, phone, status)
       OUTPUT INSERTED.id
-      VALUES (@user_id, @delivery_id, @location, @sub_total, @delivery_fees, @status)
+      VALUES 
+      (@user_id, @delivery_id, @location, @sub_total, @delivery_fees, @first_name, @last_name, @phone, @status)
     `);
 
   const order_id = orderResult.recordset[0].id;
 
-  // 4) Insert into order_item
   for (const item of cartItems) {
     await pool
       .request()
@@ -79,11 +94,82 @@ const setOrder = asyncWrapper(async (req, res, next) => {
       `);
   }
 
-  // 5) Clear cart
   await pool
     .request()
     .input("user_id", sql.Int, user_id)
     .query(`DELETE FROM cart WHERE user_id = @user_id`);
+
+  res.json({ success: true, message: "Order placed successfully", order_id });
 });
 
-module.exports = { setOrder };
+const getAllOrdersByUser = asyncWrapper(async (req, res, next) => {
+  const { user_id } = req.params;
+
+  const pool = await connectDB();
+
+  const result = await pool.request().input("user_id", sql.Int, user_id).query(`
+      SELECT 
+        id AS order_id,
+        user_id,
+        location,
+        status,
+        date_placed,
+        date_arrived,
+      FROM orders
+      WHERE user_id = @user_id
+      ORDER BY created_at DESC
+    `);
+
+  if (result.recordset.length === 0)
+    return next(generateError("No orders found", 200, FAIL));
+
+  return handleRes(res, 200, SUCCESS, result.recordset);
+});
+
+const deleteOrder = asyncWrapper(async (req, res, next) => {
+  const { orderId } = req.params;
+
+  const pool = await connectDB();
+
+  const check = await pool
+    .request()
+    .input("id", sql.Int, orderId)
+    .query("SELECT * FROM orders WHERE id = @id");
+
+  if (check.recordset.length === 0) {
+    return next(generateError("This order does not exist", 404, FAIL));
+  }
+
+  await pool.request().input("id", sql.Int, orderId).query(`
+      DELETE FROM orders WHERE id = @id
+    `);
+
+  return handleRes(res, 200, SUCCESS, "Order deleted successfully");
+});
+
+const followOrder = asyncWrapper(async (req, res, next) => {
+  const { user_id, order_id } = req.body;
+
+  const pool = await connectDB();
+
+  const result = await pool.request().input("user_id", sql.Int, user_id).query(`
+    SELECT id
+    FROM orders
+    WHERE user_id = @user_id
+      AND status <> 'delivered'
+  `);
+
+  if (result.recordset.length === 0)
+    return next(generateError("No waiting orders found", 200, FAIL));
+
+  const result2 = await pool.request().input("order_id", sql.Int, order_id)
+    .query(`
+    SELECT status
+    FROM orders
+    WHERE order_id= @order_id
+  `);
+
+  return handleRes(res, 200, SUCCESS, result2.recordset[0].status);
+});
+
+module.exports = { setOrder, getAllOrdersByUser, deleteOrder, followOrder };

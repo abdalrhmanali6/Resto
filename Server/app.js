@@ -5,7 +5,9 @@ const adminRouter = require("./Routes/adminRoutes");
 const productRouter = require("./Routes/productRoutes");
 const usersRouter = require("./Routes/usersRoutes");
 const deliveryRouter = require("./Routes/deliveryRoutes");
+const orderRouter=require("./Routes/orderRoutes");
 const cartRouter = require("./Routes/cartRoutes");
+const orderRouter = require("./Routes/orderRoutes");
 const generateError = require("./MiddleWare/generateError");
 require("dotenv").config();
 const app = express();
@@ -16,10 +18,18 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/admin", adminRouter);
+app.use("/orders", orderRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
+<<<<<<< HEAD
 app.use("/users", usersRouter);
 app.use("/delivery", deliveryRouter);
+=======
+app.use('/users',usersRouter);
+app.use('/delivery',deliveryRouter);
+app.use('/order',orderRouter);
+
+>>>>>>> 761bed70e8c07ba9e078e2d2d34b90aae5561b90
 
 app.use((req, res, next) => {
     next(generateError("Page not found", 404, ERROR));
