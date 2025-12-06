@@ -46,6 +46,10 @@
     .green{
         @apply text-green-400 text-center
     }
+
+    .walletIcons{
+        @apply w-15 hover:shadow  rounded-3xl sm:scale-75 lg:scale-100 scale-70
+    }
 }
 
         /* Hide scrollbar */

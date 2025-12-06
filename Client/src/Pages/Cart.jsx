@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../Components/Headernav";
 import { getCart, updateCartItem, deleteCartItem } from "../Components/CartApi";
-
+import {  useNavigate } from "react-router-dom";
 function Cart() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,6 +9,7 @@ function Cart() {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : null;
   const userId = user?.id;
+const Navigate = useNavigate();
 
   useEffect(() => {
     if (!userId || !token) {
@@ -74,9 +75,14 @@ function Cart() {
     return <p className="text-center p-8">Loading...</p>;
   }
 
-  if (items.length === 0) {
-    return <p className="text-center p-8">لا توجد منتجات في السلة</p>;
-  }
+if (items.length === 0) {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <p className="text-center p-8">لا توجد منتجات في السلة</p>
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -143,7 +149,8 @@ function Cart() {
           <p className="text-lg font-bold">
             الإجمالي: {itemsTotal.toFixed(2)} ج.م
           </p>
-          <button className="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600">
+          <button className="bg-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600"
+         onClick={() => Navigate("/order/set")}>
             إكمال الطلب
           </button>
         </div>

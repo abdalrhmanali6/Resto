@@ -5,4 +5,8 @@ const verifyToken = require("../MiddleWare/verifyToken");
 
 
 
+
+Router.route('/:user_id').get(Order.getAllOrdersByUser);
 Router.route('/:user_id').post(Order.setOrder);
+
+module.exports = Router;
