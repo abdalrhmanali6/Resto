@@ -59,7 +59,6 @@ CREATE TABLE orders
   --payment_type VARCHAR(25) CHECK (payment_type IN ('cash','credit_card','wallet')),
   FOREIGN KEY(user_id) REFERENCES users(id),
   FOREIGN KEY(delivery_id) REFERENCES delivery_profiles(user_id)
-
   )
 
   CREATE TABLE categories (
