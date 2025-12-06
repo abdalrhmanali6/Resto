@@ -21,15 +21,10 @@ app.use("/admin", adminRouter);
 app.use("/orders", orderRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
-<<<<<<< HEAD
-app.use("/users", usersRouter);
-app.use("/delivery", deliveryRouter);
-=======
 app.use('/users',usersRouter);
 app.use('/delivery',deliveryRouter);
 app.use('/order',orderRouter);
 
->>>>>>> 761bed70e8c07ba9e078e2d2d34b90aae5561b90
 
 app.use((req, res, next) => {
     next(generateError("Page not found", 404, ERROR));

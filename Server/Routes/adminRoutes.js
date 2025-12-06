@@ -52,8 +52,6 @@ Router.route("/delivery/:deliveryId")
     .get(verifyToken, Delivery.getSingleDelivery)
     .patch(verifyToken, Delivery.updateDelivery)
     .delete(verifyToken, Delivery.deleteDelivery);
-<<<<<<< HEAD
-=======
   
 
 
@@ -68,6 +66,5 @@ Router.route("/delivery/:deliveryId")
   );
 
 
->>>>>>> 761bed70e8c07ba9e078e2d2d34b90aae5561b90
 
 module.exports = Router;
