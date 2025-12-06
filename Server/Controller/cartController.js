@@ -125,6 +125,11 @@ const removeFromCart = asyncWrapper(async (req, res, next) => {
   handleRes(res, 201, SUCCESS, "this product deleted from cart");
 });
 
+
+
+
+
+
 module.exports = {
   addToCart,
   removeFromCart,

@@ -3,8 +3,9 @@ const Router = express.Router();
 const verifyToken = require("../MiddleWare/verifyToken");
 const User = require("../Controller/Admin/usersController");
 const Role = require("../Controller/Admin/roleController");
-const Delivery = require("../Controller/Admin/deliveryControllere");
+const Delivery = require("../Controller/Admin/deliveryController");
 const Product = require("../Controller/Admin/productController");
+const Order = require("../Controller/Admin/orderController");
 const LogIn = require("../Authentication/logIn");
 const Register = require("../Authentication/register");
 
@@ -62,4 +63,18 @@ Router.route("/roles/:roleId")
     .patch(verifyToken, Delivery.updateDelivery)
     .delete(verifyToken, Delivery.deleteDelivery);
   
+
+
+
+
+
+  Router.route("/orders").get(verifyToken, Order.getAllOrders);
+
+  Router.route("/orders/:order_id").patch(
+    verifyToken,
+    Order.orderFromPreparingToReady
+  );
+
+
+
 module.exports = Router;

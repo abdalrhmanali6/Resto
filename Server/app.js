@@ -7,6 +7,7 @@ const usersRouter = require('./Routes/usersRoutes');
 const deliveryRouter = require("./Routes/deliveryRoutes");
 const orderRouter=require("./Routes/orderRoutes");
 const cartRouter = require("./Routes/cartRoutes");
+const orderRouter = require("./Routes/orderRoutes");
 const generateError = require("./MiddleWare/generateError");
 require("dotenv").config();
 const app = express();
@@ -21,6 +22,7 @@ app.use(cors());
 
 
 app.use("/admin", adminRouter);
+app.use("/orders", orderRouter);
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 app.use('/users',usersRouter);
